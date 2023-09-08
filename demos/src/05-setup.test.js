@@ -7,7 +7,7 @@ describe('conjuto', () => {
     console.log('subida de bd');
   });
 
-  afterAll( () => {
+  afterAll(() => {
     // se ejecuta despues de todas las pruebas.
     console.log('bajada de bd');
   });
