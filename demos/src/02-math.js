@@ -18,7 +18,7 @@ function substract(a, b) {
 }
 
 function power(a, b) {
-  return Math.pow(a, b);
+  return a ** b;
 }
 
 module.exports = {
