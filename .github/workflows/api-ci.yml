@@ -1,5 +1,5 @@
 name: API CI
-
+#on: [push]
 on:
   push:
     paths:
@@ -11,21 +11,6 @@ defaults:
     working-directory: ./api
 
 jobs:
-  linter:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Nodejs
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      - name: Install
-        shell: bash
-        run: |
-          npm ci
-          npm run lint
-
   unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -34,19 +19,38 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v2
         with:
-          node-version: 14
-      - name: Clear npm cache
-        run: npm cache clean --force
-      - name: Install
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: ./api/package-lock.json
+      - name: install
         shell: bash
-        run: |
-          npm ci
-          npm run test
+        run: npm ci
+      - name: run unit test
+        shell: bash
+        run: npm run test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: ./api/package-lock.json
+      - name: install
+        shell: bash
+        run: npm ci
+      - name: run lint
+        shell: bash
+        run: npm run lint --silent
 
   e2e:
     runs-on: ubuntu-latest
     container:
-      image: node:14
+      image: node:18
 
     services:
       mongo-e2e:
@@ -60,12 +64,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Clear npm cache
-        run: npm cache clean --force
-      - name: Install
+      - name: install
         shell: bash
         run: npm ci
-      - name: Run e2e
+      - name: run e2e
         shell: bash
         run: npm run test:e2e
         env:
