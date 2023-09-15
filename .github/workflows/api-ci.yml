@@ -1,11 +1,12 @@
-name: API CI 
-#ON PUSH
-# on: [push]
+name: API CI
+
+#on: [push]
 on:
   push:
     paths:
       - "./api/**"
-      - "./.github/workflows/api-ci.yml"
+      - ".github/workflows/api-ci.yml"
+
 
 defaults:
   run:
@@ -16,14 +17,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
-      - name: Set up Node.js
-        run: actions/setup-node@v2
+        uses: actions/checkout@v2
+      - name: Setup Nodejs
+        uses: actions/setup-node@v2
         with:
-          node-version: "14"
-      - name: Install dependencies
+          node-version: 14
+          cache: 'npm'
+          cache-dependency-path: ./api/package-lock.json
+      - name: install
         shell: bash
-        run: npm install
-      - name: Run unit tests
+        run: npm ci
+      - name: run unit test
         shell: bash
         run: npm run test
